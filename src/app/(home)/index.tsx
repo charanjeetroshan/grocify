@@ -1,8 +1,14 @@
-import { Text, View } from "react-native"
+import { useAuth } from "@clerk/expo"
+import { Pressable, Text, View } from "react-native"
 export default function HomeScreen() {
+   const { signOut } = useAuth()
+
    return (
-      <View>
+      <View className="flex-1 items-center justify-center bg-primary dark:bg-secondary">
          <Text>Home Screen</Text>
+         <Pressable onPress={() => signOut()}>
+            <Text>Sign out</Text>
+         </Pressable>
       </View>
    )
 }

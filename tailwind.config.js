@@ -2,6 +2,7 @@
 module.exports = {
    content: ["./src/**/*.{js,jsx,ts,tsx}"],
    presets: [require("nativewind/preset")],
+   darkMode: "media",
    theme: {
       extend: {
          colors: {
@@ -46,6 +47,9 @@ module.exports = {
                DEFAULT: "hsl(var(--priority-high) / <alpha-value>)",
                foreground: "hsl(var(--priority-high-foreground) / <alpha-value>)",
             },
+         },
+         fontFamily: {
+            "jetbrains-mono": ["JetBrainsMono-Regular"],
          },
       },
    },
