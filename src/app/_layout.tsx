@@ -1,7 +1,16 @@
-import "../../global.css";
+import { mustEnv } from "@/lib/env"
+import { ClerkProvider } from "@clerk/expo"
+import { tokenCache } from "@clerk/expo/token-cache"
+import "../../global.css"
 
-import { Stack } from "expo-router";
+import { Stack } from "expo-router"
+
+const publishableKey = mustEnv("EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY")
 
 export default function RootLayout() {
-  return <Stack />;
+   return (
+      <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
+         <Stack screenOptions={{ headerShown: false }} />
+      </ClerkProvider>
+   )
 }
