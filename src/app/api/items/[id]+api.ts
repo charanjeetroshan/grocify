@@ -2,16 +2,16 @@ import { deleteGroceryItem, setGroceryItemPurchased, updateGroceryItemQuantity }
 
 export async function DELETE(_: Request, { id }: { id: string }) {
    try {
-      const rows = await deleteGroceryItem(id)
+      const row = await deleteGroceryItem(id)
 
-      if (!rows) {
+      if (!row) {
          return Response.json({ error: "Grocery item not found" }, { status: 404 })
       }
 
       return Response.json(
          {
             message: "Grocery item deleted successfully",
-            rowsAffected: rows,
+            item: row,
          },
          { status: 200 },
       )

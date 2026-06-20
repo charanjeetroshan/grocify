@@ -18,7 +18,14 @@ export async function POST(request: Request) {
       }
 
       const item = await createGroceryItem({ name, category, quantity, priority })
-      return Response.json({ item, message: "Grocery item created successfully" }, { status: 201 })
+
+      return Response.json(
+         {
+            item,
+            message: "Grocery item created successfully",
+         },
+         { status: 201 },
+      )
    } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to create new grocery item"
       return Response.json({ error: message }, { status: 500 })

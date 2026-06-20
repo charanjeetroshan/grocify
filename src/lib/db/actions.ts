@@ -1,13 +1,13 @@
+import type { CreateGroceryItemInput } from "@/types"
 import { desc, eq } from "drizzle-orm"
 import { db } from "./client"
 import { groceryItems } from "./schema"
-import { GroceryItem } from "./types"
 
 export const listGroceryItems = async () => {
    return await db.select().from(groceryItems).orderBy(desc(groceryItems.updatedAt))
 }
 
-export const createGroceryItem = async (item: Omit<GroceryItem, "id" | "updatedAt" | "purchased">) => {
+export const createGroceryItem = async (item: CreateGroceryItemInput) => {
    const rows = await db
       .insert(groceryItems)
       .values({

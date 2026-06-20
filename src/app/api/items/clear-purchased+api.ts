@@ -1,6 +1,6 @@
 import { clearCompletedGroceryItems as clearPurchasedGroceryItems } from "@/lib/db/actions"
 
-export async function POST() {
+export async function DELETE() {
    try {
       const rows = await clearPurchasedGroceryItems()
       return Response.json(
