@@ -13,6 +13,6 @@ export type GroceryCategory =
    | "Household Items"
    | "Personal Care"
 
-export type GroceryPriority = Pick<GroceryItem, "priority">
+export type GroceryPriority = GroceryItem["priority"]
 
 export type CreateGroceryItemInput = Omit<GroceryItem, "id" | "purchased" | "updatedAt">
