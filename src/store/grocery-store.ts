@@ -65,8 +65,19 @@ export const useGroceryStore = create<GroceryStore>((set, get) => ({
       }
    },
    updateQuantity: async (id, quantity) => {
+      const originalQuantity = get().items.find((item) => item.id === id)?.quantity
+
+      if (originalQuantity === undefined) {
+         set({ error: "Item to update not found" })
+         return
+      }
+
       const latestQuantity = Math.max(quantity, 1)
-      set({ isLoading: true, error: null })
+      set((state) => ({
+         isLoading: true,
+         error: null,
+         items: state.items.map((item) => (item.id === id ? { ...item, quantity: latestQuantity } : item)),
+      }))
 
       try {
          const response = await fetch(`/api/items/${id}`, {
@@ -80,13 +91,15 @@ export const useGroceryStore = create<GroceryStore>((set, get) => ({
          const result = await response.json()
 
          if (!response.ok) {
+            set((state) => ({
+               items: state.items.map((item) => (item.id === id ? { ...item, quantity: originalQuantity } : item)),
+            }))
             throw new Error(`Failed to update grocery item's quantity: ${result.error}`)
          }
-
-         set((state) => ({
-            items: state.items.map((item) => (item.id === id ? result.item : item)),
-         }))
       } catch (error) {
+         set((state) => ({
+            items: state.items.map((item) => (item.id === id ? { ...item, quantity: originalQuantity } : item)),
+         }))
          console.log("Error updating quantity", error)
          set({ error: "Error updating quantity" })
       } finally {
@@ -101,7 +114,11 @@ export const useGroceryStore = create<GroceryStore>((set, get) => ({
          return
       }
 
-      set({ isLoading: true, error: null })
+      set((state) => ({
+         isLoading: true,
+         error: null,
+         items: state.items.map((item) => (item.id === id ? { ...item, purchased: !item.purchased } : item)),
+      }))
 
       try {
          const response = await fetch(`/api/items/${id}`, {
@@ -115,13 +132,15 @@ export const useGroceryStore = create<GroceryStore>((set, get) => ({
          const result = await response.json()
 
          if (!response.ok) {
+            set((state) => ({
+               items: state.items.map((item) => (item.id === id ? { ...item, purchased: item.purchased } : item)),
+            }))
             throw new Error(`Failed to toggle grocery item's purchased status: ${result.error}`)
          }
-
-         set((state) => ({
-            items: state.items.map((item) => (item.id === id ? result.item : item)),
-         }))
       } catch (error) {
+         set((state) => ({
+            items: state.items.map((item) => (item.id === id ? { ...item, purchased: item.purchased } : item)),
+         }))
          console.log("Error toggling purchased", error)
          set({ error: "Error toggling purchased" })
       } finally {
@@ -129,18 +148,37 @@ export const useGroceryStore = create<GroceryStore>((set, get) => ({
       }
    },
    removeItem: async (id) => {
-      set({ isLoading: true, error: null })
+      const itemToDelete = get().items.find((item) => item.id === id)
+
+      if (!itemToDelete) {
+         set({ error: "Item to delete not found" })
+         return
+      }
+
+      const itemToDeleteIndex = get().items.findIndex((item) => item.id === id)
+
+      set((state) => ({
+         isLoading: true,
+         error: null,
+         items: state.items.filter((item) => item.id !== id),
+      }))
 
       try {
          const response = await fetch(`/api/items/${id}`, { method: "DELETE" })
          const result = await response.json()
 
          if (!response.ok) {
+            set((state) => ({
+               items: state.items
+                  .slice(0, itemToDeleteIndex)
+                  .concat(itemToDelete, state.items.slice(itemToDeleteIndex)),
+            }))
             throw new Error(`Failed to delete grocery item: ${result.error}`)
          }
-
-         set((state) => ({ items: state.items.filter((item) => item.id !== id) }))
       } catch (error) {
+         set((state) => ({
+            items: state.items.slice(0, itemToDeleteIndex).concat(itemToDelete, state.items.slice(itemToDeleteIndex)),
+         }))
          console.log("Error deleting item", error)
          set({ error: "Error deleting item" })
       } finally {
