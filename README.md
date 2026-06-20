@@ -1,56 +1,106 @@
-# Welcome to your Expo app 👋
+# Grocify
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+> Plan smarter. Shop happier.
 
-## Get started
+Grocify is a smart grocery shopping list manager for iOS and Android. Organize your list by category and priority, track quantities, and gain insights into your shopping habits — all synced to the cloud with real-time updates.
 
-1. Install dependencies
+## Features
 
-   ```bash
-   npm install
-   ```
+- **Shopping List** — Add, remove, and manage grocery items with name, category, quantity, and priority
+- **Categories** — Organize items across Produce, Dairy, Meat, Bakery, Frozen Foods, Beverages, Snacks, Household Items, and Personal Care
+- **Priority Levels** — Mark items as Low, Medium, or High priority
+- **Completed Items** — Toggle items as purchased and clear them in bulk
+- **Planner** — View live stats (pending count, high-priority items, total units) before you shop
+- **Insights** — User profile and shopping analytics
+- **Authentication** — Sign in with Google, Facebook, or GitHub via Clerk SSO
 
-2. Start the app
+## Tech Stack
 
-   ```bash
-   npx expo start
-   ```
+| Category | Technology |
+|---|---|
+| Framework | Expo SDK 56 / React Native 0.85 |
+| Routing | Expo Router (file-based) |
+| Styling | NativeWind 4 (Tailwind CSS) |
+| State | Zustand 5 |
+| Database | PostgreSQL (Neon serverless) |
+| ORM | Drizzle ORM |
+| Auth | Clerk (Google, Facebook, GitHub OAuth) |
+| Language | TypeScript |
 
-In the output, you'll find options to open the app in a
+## Getting Started
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### Prerequisites
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- Node.js 18+
+- Expo CLI (`npm install -g expo-cli`)
+- A [Clerk](https://clerk.com) project with Google, Facebook, and GitHub OAuth configured
+- A [Neon](https://neon.tech) PostgreSQL database
 
-## Get a fresh project
+### Environment Variables
 
-When you're ready, run:
+Create a `.env.local` file in the project root:
 
-```bash
-npm run reset-project
+```env
+EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+DATABASE_URL=your_neon_postgres_connection_string
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### Install & Run
 
-### Other setup steps
+```bash
+npm install
+```
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Push the database schema:
 
-## Learn more
+```bash
+npx drizzle-kit push
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+Start the development server:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+npx expo start
+```
 
-## Join the community
+Then open the app in a [development build](https://docs.expo.dev/develop/development-builds/introduction/), [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/), or [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/).
 
-Join our community of developers creating universal apps.
+## Project Structure
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```
+src/
+  app/                  # Expo Router screens
+    (auth)/             # Sign-in screen
+    (tabs)/             # Main tab screens (List, Planner, Insights)
+    api/                # API route handlers
+  components/           # Shared UI components
+  hooks/                # Custom hooks (useSocialAuth)
+  lib/
+    db/                 # Drizzle schema, client, and actions
+    env.ts              # Validated environment variables
+  store/                # Zustand grocery store
+  types/                # Shared TypeScript types
+```
+
+## Database Schema
+
+```
+groceryItems
+├── id          text (primary key, UUID)
+├── name        text
+├── category    text
+├── quantity    integer (default: 1)
+├── purchased   boolean (default: false)
+├── priority    "low" | "medium" | "high" (default: "medium")
+└── updatedAt   bigint
+```
+
+## API Routes
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `/api/items` | List all items |
+| POST | `/api/items` | Create a new item |
+| PATCH | `/api/items/[id]` | Update quantity or purchased status |
+| DELETE | `/api/items/[id]` | Delete an item |
+| DELETE | `/api/items/clear-purchased` | Delete all purchased items |
