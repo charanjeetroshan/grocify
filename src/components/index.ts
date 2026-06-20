@@ -1,4 +1,5 @@
 export * from "./DecorativeElement"
+export * from "./insights/UserProfileCard"
 export * from "./list/CompletedItems"
 export * from "./list/ListHeroCard"
 export * from "./list/PendingItemCard"

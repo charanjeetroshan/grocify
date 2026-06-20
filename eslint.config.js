@@ -17,7 +17,7 @@ const unusedVarsOptions = {
 
 module.exports = defineConfig([
    {
-      ignores: ["node_modules/", ".expo/", "dist/"],
+      ignores: ["node_modules", ".expo", "dist", "build", "android", "ios"],
    },
    ...expoConfig,
    {

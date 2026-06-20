@@ -59,6 +59,7 @@
     "web": "expo start --web",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
     "db:push": "drizzle-kit push",
     "db:seed": "node scripts/seed-grocery.js"
   },
