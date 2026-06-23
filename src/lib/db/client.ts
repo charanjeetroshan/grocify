@@ -2,10 +2,10 @@ import { neon } from "@neondatabase/serverless"
 import { drizzle } from "drizzle-orm/neon-http"
 import * as schema from "./schema"
 
-export const databaseUrl = process.env.DATABASE_URL!
+export const databaseUrl = process.env.EXPO_PUBLIC_DATABASE_URL!
 
 if (!databaseUrl) {
-   throw new Error("Missing env var DATABASE_URL")
+   throw new Error("Missing env var EXPO_PUBLIC_DATABASE_URL")
 }
 
 const sql = neon(databaseUrl)
