@@ -1,4 +1,4 @@
-import { DATABASE_URL } from "@/lib/db/client"
+import { databaseUrl } from "@/lib/db/client"
 import { defineConfig } from "drizzle-kit"
 
 export default defineConfig({
@@ -6,6 +6,6 @@ export default defineConfig({
    out: "./drizzle",
    dialect: "postgresql",
    dbCredentials: {
-      url: DATABASE_URL,
+      url: databaseUrl,
    },
 })
