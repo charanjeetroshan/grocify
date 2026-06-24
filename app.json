@@ -25,7 +25,12 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router",
+      [
+        "expo-router",
+        {
+          "origin": "https://charanjeetroshan-grocify--preview.expo.app"
+        }
+      ],
       [
         "expo-splash-screen",
         {
