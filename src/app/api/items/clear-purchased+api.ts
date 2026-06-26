@@ -1,8 +1,15 @@
-import { clearCompletedGroceryItems as clearPurchasedGroceryItems } from "@/lib/db/actions"
+import { authHandler, isUser } from "@/lib"
+import { groceryDbActions } from "@/lib/db/"
 
-export async function DELETE() {
+export async function DELETE(request: Request) {
    try {
-      const rows = await clearPurchasedGroceryItems()
+      const user = await authHandler.ensureUserAuthenticated(request)
+
+      if (!isUser(user)) {
+         return user.result
+      }
+
+      const rows = await groceryDbActions.clearPurchasedGroceryItems(user.id)
       return Response.json(
          {
             message: "Purchased grocery items cleared successfully",

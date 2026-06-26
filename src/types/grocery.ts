@@ -16,3 +16,5 @@ export type GroceryCategory =
 export type GroceryPriority = GroceryItem["priority"]
 
 export type CreateGroceryItemInput = Omit<GroceryItem, "id" | "purchased" | "updatedAt">
+
+export type CreateGroceryItemApiRequest = Omit<GroceryItem, "id" | "purchased" | "updatedAt" | "userId">

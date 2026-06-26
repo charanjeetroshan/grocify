@@ -3,6 +3,7 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "dependencies": {
+    "@clerk/backend": "^3.8.4",
     "@clerk/expo": "^3.5.0",
     "@expo/ui": "~56.0.18",
     "@expo/vector-icons": "^15.0.2",
@@ -60,7 +61,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
-    "db:push": "drizzle-kit push",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
     "db:seed": "node scripts/seed-grocery.js"
   },
   "private": true

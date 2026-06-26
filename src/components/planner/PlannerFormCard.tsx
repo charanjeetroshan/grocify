@@ -1,12 +1,14 @@
 import { useGroceryStore } from "@/store/grocery-store"
 import { GroceryCategory, GroceryPriority } from "@/types"
+import { useUser } from "@clerk/expo"
 import { FontAwesome6 } from "@expo/vector-icons"
 import { useColorScheme } from "nativewind"
 import { useState } from "react"
-import { Pressable, Text, TextInput, View } from "react-native"
+import { Alert, Pressable, Text, TextInput, View } from "react-native"
 import { categories, categoryIcons, priorities } from "./constants"
 
 export function PlannerFormCard() {
+   const { user } = useUser()
    const { colorScheme } = useColorScheme()
    const iconColor = colorScheme === "dark" ? "hsl(150 31% 9%)" : "hsl(138 47% 97%)"
 
@@ -26,12 +28,19 @@ export function PlannerFormCard() {
    const createItem = async () => {
       if (!canCreateItem) return
 
-      await addItem({
-         name: name.trim(),
-         quantity: Number(quantity),
-         category,
-         priority,
-      })
+      if (!user) {
+         return Alert.alert("Error", "Log out and try signing in again.")
+      }
+
+      await addItem(
+         {
+            name: name.trim(),
+            quantity: Number(quantity),
+            category,
+            priority,
+         },
+         user.id,
+      )
 
       setName("")
       setQuantity("1")
@@ -131,7 +140,7 @@ export function PlannerFormCard() {
 
          {error ? (
             <View className="mt-3 rounded-2xl border border-destructive bg-destructive px-3 py-2">
-               <Text className="text-sm text-white text-center uppercase">{error}</Text>
+               <Text className="text-sm dark:text-white text-center uppercase">{error}</Text>
             </View>
          ) : null}
       </View>

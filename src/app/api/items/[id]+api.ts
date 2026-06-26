@@ -1,8 +1,15 @@
-import { deleteGroceryItem, setGroceryItemPurchased, updateGroceryItemQuantity } from "@/lib/db/actions"
+import { authHandler, isUser } from "@/lib"
+import { groceryDbActions } from "@/lib/db/"
 
-export async function DELETE(_: Request, { id }: { id: string }) {
+export async function DELETE(request: Request, { id }: { id: string }) {
    try {
-      const row = await deleteGroceryItem(id)
+      const user = await authHandler.ensureUserAuthenticated(request)
+
+      if (!isUser(user)) {
+         return user.result
+      }
+
+      const row = await groceryDbActions.deleteGroceryItem(id, user.id)
 
       if (!row) {
          return Response.json({ error: "Grocery item not found" }, { status: 404 })
@@ -24,10 +31,15 @@ export async function DELETE(_: Request, { id }: { id: string }) {
 export async function PATCH(request: Request, { id }: { id: string }) {
    try {
       const { quantity, purchased } = await request.json()
+      const user = await authHandler.ensureUserAuthenticated(request)
+
+      if (!isUser(user)) {
+         return user.result
+      }
 
       const item = quantity
-         ? await updateGroceryItemQuantity(id, quantity)
-         : await setGroceryItemPurchased(id, purchased ?? true)
+         ? await groceryDbActions.updateGroceryItemQuantity(id, quantity, user.id)
+         : await groceryDbActions.setGroceryItemPurchased(id, purchased ?? true, user.id)
 
       if (!item) {
          return Response.json({ error: "Grocery item not found" }, { status: 404 })

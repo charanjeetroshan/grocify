@@ -1,8 +1,15 @@
-import { createGroceryItem, listGroceryItems } from "@/lib/db/actions"
+import { authHandler, isUser } from "@/lib"
+import { groceryDbActions } from "@/lib/db/"
 
-export async function GET() {
+export async function GET(request: Request) {
    try {
-      return Response.json({ items: await listGroceryItems() })
+      const user = await authHandler.ensureUserAuthenticated(request)
+
+      if (!isUser(user)) {
+         return user.result
+      }
+
+      return Response.json({ items: await groceryDbActions.listGroceryItems(user.id) }, { status: 200 })
    } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to fetch grocery items"
       return Response.json({ error: message }, { status: 500 })
@@ -17,7 +24,13 @@ export async function POST(request: Request) {
          return Response.json({ error: "Missing required fields" }, { status: 400 })
       }
 
-      const item = await createGroceryItem({ name, category, quantity, priority })
+      const user = await authHandler.ensureUserAuthenticated(request)
+
+      if (!isUser(user)) {
+         return user.result
+      }
+
+      const item = await groceryDbActions.createGroceryItem({ userId: user.id, name, category, quantity, priority })
 
       return Response.json(
          {

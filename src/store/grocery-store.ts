@@ -1,27 +1,27 @@
-import type { CreateGroceryItemInput, GroceryItem } from "@/types"
+import type { CreateGroceryItemApiRequest, GroceryItem } from "@/types"
 import { create } from "zustand"
 
 type GroceryStore = {
    items: GroceryItem[]
    isLoading: boolean
    error: string | null
-   loadItems: () => Promise<void>
-   addItem: (item: CreateGroceryItemInput) => Promise<void>
-   updateQuantity: (id: string, quantity: number) => Promise<void>
-   togglePurchased: (id: string) => Promise<void>
-   removeItem: (id: string) => Promise<void>
-   clearPurchased: () => Promise<void>
+   loadItems: (userId: string) => Promise<void>
+   addItem: (item: CreateGroceryItemApiRequest, userId: string) => Promise<void>
+   updateQuantity: (id: string, quantity: number, userId: string) => Promise<void>
+   togglePurchased: (id: string, userId: string) => Promise<void>
+   removeItem: (id: string, userId: string) => Promise<void>
+   clearPurchased: (userId: string) => Promise<void>
 }
 
 export const useGroceryStore = create<GroceryStore>((set, get) => ({
    items: [],
    isLoading: false,
    error: null,
-   loadItems: async () => {
+   loadItems: async (userId: string) => {
       set({ isLoading: true, error: null })
 
       try {
-         const response = await fetch("/api/items")
+         const response = await fetch(`/api/items?userId=${userId}`)
          const result = await response.json()
 
          if (!response.ok) {
@@ -36,11 +36,11 @@ export const useGroceryStore = create<GroceryStore>((set, get) => ({
          set({ isLoading: false })
       }
    },
-   addItem: async (item) => {
+   addItem: async (item, userId) => {
       set({ isLoading: true, error: null })
 
       try {
-         const response = await fetch("/api/items", {
+         const response = await fetch(`/api/items?userId=${userId}`, {
             method: "POST",
             headers: {
                "Content-Type": "application/json",
@@ -64,7 +64,7 @@ export const useGroceryStore = create<GroceryStore>((set, get) => ({
          set({ isLoading: false })
       }
    },
-   updateQuantity: async (id, quantity) => {
+   updateQuantity: async (id, quantity, userId) => {
       const originalQuantity = get().items.find((item) => item.id === id)?.quantity
 
       if (originalQuantity === undefined) {
@@ -80,7 +80,7 @@ export const useGroceryStore = create<GroceryStore>((set, get) => ({
       }))
 
       try {
-         const response = await fetch(`/api/items/${id}`, {
+         const response = await fetch(`/api/items/${id}?userId=${userId}`, {
             method: "PATCH",
             headers: {
                "Content-Type": "application/json",
@@ -106,7 +106,7 @@ export const useGroceryStore = create<GroceryStore>((set, get) => ({
          set({ isLoading: false })
       }
    },
-   togglePurchased: async (id) => {
+   togglePurchased: async (id, userId) => {
       const item = get().items.find((item) => item.id === id)
 
       if (!item) {
@@ -121,7 +121,7 @@ export const useGroceryStore = create<GroceryStore>((set, get) => ({
       }))
 
       try {
-         const response = await fetch(`/api/items/${id}`, {
+         const response = await fetch(`/api/items/${id}?userId=${userId}`, {
             method: "PATCH",
             headers: {
                "Content-Type": "application/json",
@@ -147,7 +147,7 @@ export const useGroceryStore = create<GroceryStore>((set, get) => ({
          set({ isLoading: false })
       }
    },
-   removeItem: async (id) => {
+   removeItem: async (id, userId) => {
       const itemToDelete = get().items.find((item) => item.id === id)
 
       if (!itemToDelete) {
@@ -164,7 +164,7 @@ export const useGroceryStore = create<GroceryStore>((set, get) => ({
       }))
 
       try {
-         const response = await fetch(`/api/items/${id}`, { method: "DELETE" })
+         const response = await fetch(`/api/items/${id}?userId=${userId}`, { method: "DELETE" })
          const result = await response.json()
 
          if (!response.ok) {
@@ -185,11 +185,11 @@ export const useGroceryStore = create<GroceryStore>((set, get) => ({
          set({ isLoading: false })
       }
    },
-   clearPurchased: async () => {
+   clearPurchased: async (userId) => {
       set({ isLoading: true, error: null })
 
       try {
-         const response = await fetch("/api/items/clear-purchased", { method: "DELETE" })
+         const response = await fetch(`/api/items/clear-purchased?userId=${userId}`, { method: "DELETE" })
          const result = await response.json()
 
          if (!response.ok) {
