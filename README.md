@@ -42,7 +42,7 @@ Create a `.env.local` file in the project root:
 
 ```env
 EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
-EXPO_PUBLIC_DATABASE_URL=your_neon_postgres_connection_string
+DATABASE_URL=your_neon_postgres_connection_string
 ```
 
 ### Install & Run

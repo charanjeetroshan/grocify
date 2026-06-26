@@ -1,10 +1,10 @@
 const { neon } = require("@neondatabase/serverless")
 const crypto = require("node:crypto")
 
-const databaseUrl = process.env.EXPO_PUBLIC_DATABASE_URL
+const databaseUrl = process.env.DATABASE_URL
 
 if (!databaseUrl) {
-   throw new Error("EXPO_PUBLIC_DATABASE_URL is required. Example: EXPO_PUBLIC_DATABASE_URL=... npm run seed:grocery")
+   throw new Error("DATABASE_URL is required. Example: DATABASE_URL=... npm run seed:grocery")
 }
 
 const sql = neon(databaseUrl)
