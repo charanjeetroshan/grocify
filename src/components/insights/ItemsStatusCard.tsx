@@ -1,11 +1,10 @@
+import { useColors } from "@/hooks/useColors"
 import { useGroceryStore } from "@/store/grocery-store"
 import { FontAwesome6 } from "@expo/vector-icons"
-import { useColorScheme } from "nativewind"
 import { Text, View } from "react-native"
 
 export function ItemsStatusCard() {
-   const { colorScheme } = useColorScheme()
-   const iconColor = colorScheme === "dark" ? "hsl(150 31% 9%)" : "hsl(138 47% 97%)"
+   const { textForeground: iconColor } = useColors()
 
    const { items } = useGroceryStore()
    const totalItems = items.length

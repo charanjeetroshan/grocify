@@ -1,3 +1,4 @@
+import { Toaster } from "@/components/Toaster"
 import { ClerkProvider } from "@clerk/expo"
 import { tokenCache } from "@clerk/expo/token-cache"
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from "expo-router"
@@ -19,6 +20,7 @@ export default function RootLayout() {
          <KeyboardProvider>
             <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
                <Stack screenOptions={{ headerShown: false }} />
+               <Toaster />
             </ThemeProvider>
          </KeyboardProvider>
       </ClerkProvider>

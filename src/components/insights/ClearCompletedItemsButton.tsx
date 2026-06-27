@@ -1,25 +1,33 @@
 import { useGroceryStore } from "@/store/grocery-store"
 import { useUser } from "@clerk/expo"
-import { Alert, Pressable, Text, View } from "react-native"
+import { ActivityIndicator, Pressable, Text } from "react-native"
+import { toast } from "../Toaster"
 
 export function ClearPurchasedItemsButton() {
    const { user } = useUser()
-   const { clearPurchased } = useGroceryStore()
+   const { isLoading, items, clearPurchased } = useGroceryStore()
+   const hasPurchasedItems = items.some((item) => item.purchased)
 
    const handleClear = async () => {
       if (!user) {
-         return Alert.alert("Error", "Log out and try signing in again.")
+         return toast.error("Log out and try signing in again.")
+      }
+
+      if (!hasPurchasedItems) {
+         return toast.info("No purchased items to clear.")
       }
 
       await clearPurchased(user.id)
-      Alert.alert("Success", "Purchased items cleared successfully.")
+      toast.success("Purchased items cleared successfully.")
    }
 
    return (
-      <View className="bg-primary p-4 rounded-2xl">
-         <Pressable onPress={handleClear} className="flex-row items-center justify-center gap-2">
-            <Text className="text-background font-medium">Clear Purchased Items</Text>
-         </Pressable>
-      </View>
+      <Pressable
+         onPress={handleClear}
+         className="flex-row justify-center items-center gap-4 p-4 rounded-2xl bg-primary active:bg-primary/70 disabled:bg-primary/70"
+         disabled={isLoading}>
+         <Text className="text-background font-medium">Clear Purchased Items</Text>
+         {isLoading && <ActivityIndicator size="small" color="#000" />}
+      </Pressable>
    )
 }

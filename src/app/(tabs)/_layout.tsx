@@ -1,8 +1,8 @@
+import { useColors } from "@/hooks/useColors"
 import { useGroceryStore } from "@/store"
 import { useAuth, useUser } from "@clerk/expo"
 import { Redirect } from "expo-router"
 import { NativeTabs } from "expo-router/unstable-native-tabs"
-import { useColorScheme } from "nativewind"
 import { useEffect } from "react"
 
 export default function TabsLayout() {
@@ -16,9 +16,7 @@ export default function TabsLayout() {
       }
    }, [isSignedIn, user, loadItems])
 
-   const { colorScheme } = useColorScheme()
-   const isDarkMode = colorScheme === "dark"
-   const tabTintColor = isDarkMode ? "hsl(142 70% 54%)" : "hsl(147 75% 33%)"
+   const { primary: tabTintColor } = useColors()
 
    if (!isLoaded) {
       return null

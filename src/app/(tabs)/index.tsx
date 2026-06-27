@@ -1,13 +1,23 @@
 import { CompletedItems, ListHeroCard, PendingItemCard, TabScreenBackground } from "@/components"
+import { useColors } from "@/hooks/useColors"
 import { useGroceryStore } from "@/store/grocery-store"
-import { FlatList, Text, View } from "react-native"
+import { ActivityIndicator, FlatList, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default function ListScreen() {
    const insets = useSafeAreaInsets()
-
-   const { items } = useGroceryStore()
+   const { primary: primaryColor } = useColors()
+   const { items, isLoading } = useGroceryStore()
    const pendingItems = items.filter((item) => !item.purchased)
+
+   if (isLoading) {
+      return (
+         <View className="flex-1 items-center justify-center bg-background">
+            <TabScreenBackground />
+            <ActivityIndicator size="large" color={primaryColor} />
+         </View>
+      )
+   }
 
    return (
       <FlatList

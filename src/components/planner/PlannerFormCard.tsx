@@ -1,18 +1,17 @@
+import { useColors } from "@/hooks/useColors"
 import { useGroceryStore } from "@/store/grocery-store"
 import { GroceryCategory, GroceryPriority } from "@/types"
 import { useUser } from "@clerk/expo"
 import { FontAwesome6 } from "@expo/vector-icons"
-import { useColorScheme } from "nativewind"
 import { useState } from "react"
-import { Alert, Pressable, Text, TextInput, View } from "react-native"
+import { ActivityIndicator, Alert, Pressable, Text, TextInput, View } from "react-native"
 import { categories, categoryIcons, priorities } from "./constants"
 
 export function PlannerFormCard() {
    const { user } = useUser()
-   const { colorScheme } = useColorScheme()
-   const iconColor = colorScheme === "dark" ? "hsl(150 31% 9%)" : "hsl(138 47% 97%)"
+   const { textForeground: iconColor } = useColors()
 
-   const { error, addItem } = useGroceryStore()
+   const { isLoading, error, addItem } = useGroceryStore()
 
    const [name, setName] = useState<string>("")
    const [quantity, setQuantity] = useState<string>("1")
@@ -125,17 +124,20 @@ export function PlannerFormCard() {
 
          <Pressable
             className={`mt-5 flex-row items-center justify-center rounded-2xl py-3 ${
-               canCreateItem ? "bg-primary" : "bg-primary/40"
+               canCreateItem && !isLoading ? "bg-primary" : "bg-primary/40"
             }`}
             onPress={createItem}
-            disabled={!canCreateItem}>
-            <FontAwesome6 name="plus" size={14} color={canCreateItem ? iconColor : "#7a9386"} />
-            <Text
-               className={`ml-2 text-base font-semibold ${
-                  canCreateItem ? "text-background" : "text-muted-foreground"
-               }`}>
-               Add to Grocery List
-            </Text>
+            disabled={!canCreateItem || isLoading}>
+            <FontAwesome6 name="plus" size={14} color={canCreateItem && !isLoading ? iconColor : "#7a9386"} />
+            <View className="flex-row items-center gap-4">
+               <Text
+                  className={`ml-2 text-base font-semibold ${
+                     canCreateItem && !isLoading ? "text-background" : "text-muted-foreground"
+                  }`}>
+                  Add to Grocery List
+               </Text>
+               {isLoading && <ActivityIndicator size="small" color="#fff" />}
+            </View>
          </Pressable>
 
          {error ? (
